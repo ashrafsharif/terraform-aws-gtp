@@ -47,7 +47,7 @@ cd terraform-aws-gtp
   
 5) Optionally, you may change the VPC details like VPC name, CIDR, subnets under `main.tf` line 26 - 33.
 
-6) Optionally, you may change the MySQL details mysql user, host and password at `mysql.tf` line 38 - 40.
+6) Optionally, you may change the MySQL details like mysql user, host and password at `mysql.tf` line 38 - 40.
 
 7) Under the `terraform-aws-gtp` directory, initialize Terraform modules:
 
