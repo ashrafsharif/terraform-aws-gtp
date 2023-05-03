@@ -41,7 +41,7 @@ cd terraform-aws-gtp
   4.4) AWS RDS MySQL admin username and password - `mysql.tf` on line 12 & 13:
   
   ```ruby
-  username                        = "gtp"
+  username                        = "dbadmin"
   password                        = "mySuperSecretP455"
   ```
   
