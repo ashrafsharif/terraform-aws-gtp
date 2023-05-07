@@ -1,8 +1,8 @@
-####################
-# IAM service role
-####################
+########
+# IAM 
+########
 
-# IAM for codedeploy
+# IAM for Codedeploy
 #####################
 
 resource "aws_iam_role" "gtp_prod_app_role" {
@@ -49,8 +49,11 @@ resource "aws_iam_role" "gtp_prod_ec2_role" {
   assume_role_policy = data.aws_iam_policy_document.gtp_prod_ec2_role.json
 }
 
+# IAM for s3
+#############
+
 resource "aws_iam_role_policy" "gtp_prod_ec2_role" {
-  name = "CodeDeployDemo-EC2-Permissions"
+  name = "CodeDeploy-EC2-Permissions"
   role = aws_iam_role.gtp_prod_ec2_role.id
 
   policy = jsonencode({
@@ -75,7 +78,7 @@ resource "aws_iam_role_policy_attachment" "gtp_prod_ec2_instance_profile" {
 
 # the instance profile will be attached to EC2 instance to allow CodeDeploy. See aws_launch_configuration.
 resource "aws_iam_instance_profile" "gtp_prod_ec2_instance_profile" {
-  name = "CodeDeployDemo-EC2-Instance-Profile"
+  name = "CodeDeploy-EC2-Instance-Profile"
   role = aws_iam_role.gtp_prod_ec2_role.name
 }
 

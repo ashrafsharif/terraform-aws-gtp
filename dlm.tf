@@ -1,9 +1,9 @@
-##########
-# DLM
-##########
+##########################
+# Data Lifecycle Manager
+##########################
 
 resource "aws_dlm_lifecycle_policy" "gtp_prod_app" {
-  description        = "GTP Prod App DLM lifecycle policy"
+  description        = "GTP Prod App Data Lifecycle Manager policy"
   execution_role_arn = aws_iam_role.dlm_lifecycle_role.arn
   state              = "ENABLED"
 

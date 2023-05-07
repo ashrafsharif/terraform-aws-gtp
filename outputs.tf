@@ -1,3 +1,7 @@
+output "vpc_id" {
+  value = data.aws_vpc.target_vpc.id
+}
+
 output "app_name" {
   value = aws_codedeploy_app.gtp_prod_app.name
 }
@@ -11,9 +15,10 @@ output "app_endpoint" {
 }
 
 output "primary_redis_endpoint" {
-  value = aws_elasticache_replication_group.gtp_prod_app.primary_endpoint_address
+  value = aws_elasticache_replication_group.gtp_prod_redis.primary_endpoint_address
 }
 
 output "reader_redis_endpoint" {
-  value = aws_elasticache_replication_group.gtp_prod_app.reader_endpoint_address
+  value = aws_elasticache_replication_group.gtp_prod_redis.reader_endpoint_address
 }
+

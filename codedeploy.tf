@@ -1,5 +1,5 @@
 ################
-# Codedeploy
+# CodeDeploy
 ################
 
 resource "aws_codedeploy_app" "gtp_prod_app" {

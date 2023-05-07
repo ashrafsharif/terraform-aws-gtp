@@ -6,21 +6,18 @@
 AWS_CLOUDWATCH_ACCESS_KEY_ID=''
 AWS_CLOUDWATCH_SECRET_ACCESS=''
 
-## enable the following if RHEL ami-04ba270ccd8098407
-# subscription-manager register --username ashrafsharif --password ''
-
-## The following steps are for rockylinux 9
+## The following steps are for RHEL 9
 ## -- start --
-## ami-087de8dc91ca56739 - rockylinux 9 - ap-southeast-1 (owner: aws-marketplace)
+## ami-04ba270ccd8098407 - RHEL 9 - ap-southeast-1 (owner: amazon)
 
 # set SELinux to permissive
-setenforce 0
-sed -i 's/^SELINUX=.*/SELINUX=permissive/g' /etc/selinux/config
+sudo setenforce 0
+sudo sed -i 's/^SELINUX=.*/SELINUX=permissive/g' /etc/selinux/config
 
-# configure remi for php
+# configure epel & remi for php & redis
+sudo dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
 sudo dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm
 sudo dnf config-manager --set-enabled remi
-sudo dnf -y install epel-release
 
 # install php8.2 and nginx 1.20
 sudo dnf -y module switch-to php:remi-8.2

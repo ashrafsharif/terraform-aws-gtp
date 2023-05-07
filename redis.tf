@@ -2,7 +2,16 @@
 # ElastiCache Redis
 #####################
 
-resource "aws_elasticache_replication_group" "gtp_prod_app" {
+resource "aws_elasticache_subnet_group" "gtp_prod_redis" {
+  name       = "gtp-prod-redis"
+  subnet_ids = [data.aws_subnets.private.ids[0], data.aws_subnets.private.ids[1]]
+
+  tags = {
+    Name = "Redis Elasticache subnet group for Production"
+  }
+}
+
+resource "aws_elasticache_replication_group" "gtp_prod_redis" {
   multi_az_enabled            = true
   automatic_failover_enabled  = true
   preferred_cache_cluster_azs = ["ap-southeast-1a", "ap-southeast-1b"]
@@ -15,7 +24,7 @@ resource "aws_elasticache_replication_group" "gtp_prod_app" {
   parameter_group_name        = "default.redis6.x"
   apply_immediately           = true
   auto_minor_version_upgrade  = false
-  subnet_group_name           = module.vpc.elasticache_subnet_group_name
+  subnet_group_name           = aws_elasticache_subnet_group.gtp_prod_redis.name
   maintenance_window          = "sat:21:01-sat:23:00" # 9 PM UTC = 5 AM MYT
   snapshot_window             = "20:00-21:00"         # 8 PM UTC = 4 AM MYT
   snapshot_retention_limit    = 7

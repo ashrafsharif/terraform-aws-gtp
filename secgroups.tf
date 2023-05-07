@@ -24,7 +24,7 @@ resource "aws_security_group" "gtp_prod_app_instance" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  vpc_id = module.vpc.vpc_id
+  vpc_id = data.aws_vpc.target_vpc.id
 }
 
 resource "aws_security_group" "gtp_prod_lb" {
@@ -49,7 +49,7 @@ resource "aws_security_group" "gtp_prod_lb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  vpc_id = module.vpc.vpc_id
+  vpc_id = data.aws_vpc.target_vpc.id
 }
 
 resource "aws_security_group" "gtp_prod_mysql" {
@@ -58,7 +58,7 @@ resource "aws_security_group" "gtp_prod_mysql" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = ["10.165.0.0/16"]
+    cidr_blocks = ["172.31.0.0/16"]
   }
 
   egress {
@@ -68,7 +68,7 @@ resource "aws_security_group" "gtp_prod_mysql" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  vpc_id = module.vpc.vpc_id
+  vpc_id = data.aws_vpc.target_vpc.id
 }
 
 resource "aws_security_group" "gtp_prod_redis" {
@@ -77,7 +77,7 @@ resource "aws_security_group" "gtp_prod_redis" {
     from_port   = 6379
     to_port     = 6379
     protocol    = "tcp"
-    cidr_blocks = ["10.165.0.0/16"]
+    cidr_blocks = ["172.31.0.0/16"]
   }
 
   egress {
@@ -87,5 +87,5 @@ resource "aws_security_group" "gtp_prod_redis" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  vpc_id = module.vpc.vpc_id
+  vpc_id = data.aws_vpc.target_vpc.id
 }

@@ -25,7 +25,7 @@ cd terraform-aws-gtp
   secret_key = ""
   ```
   
-  4.2) AWS key pair - `main.tf` on line 70:
+  4.2) AWS key pair - `main.tf` on line 24:
   
   ```ruby
   key_name = "my-aws-keypair"
@@ -45,11 +45,13 @@ cd terraform-aws-gtp
   password                        = "mySuperSecretP455"
   ```
   
-5) Optionally, you may change the VPC details like VPC name, CIDR, subnets under `main.tf` line 26 - 33.
+  4.5) Define your target VPC ID - `vpc.tf` on line 8:
+  
+  ```ruby
+  id = "vpc-0ff57649c483b7635"
+  ```
 
-6) Optionally, you may change the MySQL details like mysql user, host and password at `mysql.tf` line 38 - 40.
-
-7) Under the `terraform-aws-gtp` directory, initialize Terraform modules:
+5) Under the `terraform-aws-gtp` directory, initialize Terraform modules:
 
 ```
 terraform init
@@ -74,7 +76,16 @@ rds_endpoint = "gtpprodmysql.cdw9q2wnb00s.ap-southeast-1.rds.amazonaws.com:3306"
 reader_redis_endpoint = "gtp-prod-redis-rep-group-1-ro.u2yh4k.ng.0001.apse1.cache.amazonaws.com"
 ```
 
-Open your browser and go to the `app_endpoint`, suffixed it with `/gtp`, for example: `http://gtp-prod-app-lb-1797944393.ap-southeast-1.elb.amazonaws.com/gtp`. You shall see a Wordpress installation page. This indicates the ASG and ELB are working, plus php-fpm and nginx. The sample app is staged from this repo: https://github.com/ashrafsharif/sampleapp-wordpress during deployment. See `user-data-app.sh` line 95-99.
+Open your browser and go to the `app_endpoint` on HTTPS (http is no longer supported), suffixed it with `/gtp`, for example: `https://gtp-prod-app-lb-1797944393.ap-southeast-1.elb.amazonaws.com/gtp`. You shall see a Wordpress installation page. This indicates the ASG and ELB are working, plus php-fpm and nginx. The sample app is staged from this repo: https://github.com/ashrafsharif/sampleapp-wordpress during deployment. See `user-data-app.sh` line 95-99.
+
+Before testing MySQL connectivity, create the MySQL database, user and password manually. SSH to one of the EC2 instances and run the following command:
+
+```bash
+$ mysql -u {mysql-admin-user} -p -h {rds_endpoint_value_without_port} -P 3306
+mysql> CREATE DATABASE gtp;
+mysql> CREATE USER 'gtp'@'172.31.%.%' IDENTIFIED BY 'pass098TT';
+mysql> GRANT ALL PRIVILEGES ON gtp.* TO 'gtp'@'172.31.%.%';
+```
 
 To test MySQL and Redis, you have to SSH to both EC2 instances and update the following file `/usr/share/nginx/html/gtp/test/index.php` and specify the values on line 3 to 8 accordingly:
 
@@ -87,4 +98,36 @@ $mysql_pass = "pass098TT";   // password as in mysql.tf line 38-40
 $mysql_db = "gtp";           // db name as in mysql.tf line 34
 ```
 
-Save the file and you should be able to access `http://gtp-prod-app-lb-1797944393.ap-southeast-1.elb.amazonaws.com/gtp/test/index.php`. It will perform a simple connectivity test to the specified MySQL and Redis endpoints.
+Save the file and you should be able to access `https://gtp-prod-app-lb-1797944393.ap-southeast-1.elb.amazonaws.com/gtp/test/index.php`. It will perform a simple connectivity test to the specified MySQL and Redis endpoints.
+
+## Destroy
+
+1) To destroy everything:
+
+```
+terraform destroy # type 'yes' in the prompt
+```
+
+Note that it won't destroy the existing VPC's resources including subnets, route table, gateway, etc.
+
+## Changelogs
+
+#### Version 0.2 - 7th May 2023 - branch 0.2 (master)
+
+* Added `vpc.tf` - deployment on existing VPC.
+* Added `acm.tf` - imports existing cert to be used by ELB, so the URL endpoint is running on HTTPS.
+* Added `s3.tf` - creates a private bucket to be used by CodeDeploy CI/CD.
+* Updated `user-data-app.sh` - to support deployment for RHEL 9 from RockyLinux 9.
+* Updated `mysql.tf` - to use `db_subnet_group` for existing VPC.
+* Updated `redis.tf` - to use `elasticache_subnet_group` for existing VPC.
+* Updated `versions.tf` - to include Hashicorp TLS provider.
+* Updated `outputs.tf` - to report VPC ID value.
+* Updated `secgroup.tf` - changed the source network address to 172.31.0.0/16.
+* Updated `elb.tf` - to enforce HTTPS only.
+* Updated `main.tf` - to use exact `image_id` for RHEL 9, decoupled VPC section to its own `.tf` file.
+
+
+#### Version 0.1 - 26th Apr 2023 - branch 0.1
+
+* First push
+* Assuming VPC will be created and managed by Terraform
