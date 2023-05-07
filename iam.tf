@@ -45,7 +45,7 @@ data "aws_iam_policy_document" "gtp_prod_ec2_role" {
 }
 
 resource "aws_iam_role" "gtp_prod_ec2_role" {
-  name               = "CodeDeployDemo-EC2-Instance-Profile"
+  name               = "CodeDeploy-EC2-Instance-Profile"
   assume_role_policy = data.aws_iam_policy_document.gtp_prod_ec2_role.json
 }
 
